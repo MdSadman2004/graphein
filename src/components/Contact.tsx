@@ -14,6 +14,12 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+    // Security: Validate email format to prevent malicious input processing
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -38,16 +44,33 @@ export const Contact = () => {
           </p>
         </motion.div>
 
-        {formStatus === 'sent' ? (
+        {formStatus === 'sent' || formStatus === 'error' ? (
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
             style={{ textAlign: 'center', padding: '60px', border: `1px solid ${P.navy}`, borderRadius: '8px' }}
           >
-            <GraphMark size={64} />
-            <p className="section-label" style={{ marginTop: '24px' }}>Message Received</p>
-            <p className="body-text" style={{ marginTop: '12px' }}>We'll be in touch within 24 hours.</p>
+            {formStatus === 'sent' ? (
+              <>
+                <GraphMark size={64} />
+                <p className="section-label" style={{ marginTop: '24px' }}>Message Received</p>
+                <p className="body-text" style={{ marginTop: '12px' }}>We'll be in touch within 24 hours.</p>
+              </>
+            ) : (
+              <>
+                {/* Security: Provide generic error message without exposing details */}
+                <p className="section-label" style={{ marginTop: '24px', color: P.terracotta }}>Validation Error</p>
+                <p className="body-text" style={{ marginTop: '12px' }}>Please check your inputs and try again.</p>
+                <button
+                  className="btn-ghost"
+                  onClick={() => setFormStatus('idle')}
+                  style={{ marginTop: '24px' }}
+                >
+                  Go Back
+                </button>
+              </>
+            )}
           </motion.div>
         ) : (
           <motion.div
@@ -72,6 +95,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // Security: Prevent DoS via long inputs
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +107,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254} // Security: Enforce standard email max length
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +116,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // Security: Prevent DoS via massive text block
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
