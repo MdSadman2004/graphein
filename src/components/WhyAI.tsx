@@ -83,16 +83,24 @@ export const WhyAI = () => {
         </motion.div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-          {BENEFITS.map((b, i) => {
-            const ref = useRef(null);
-            const inView = useInView(ref, { once: true, margin: '-40px' });
+          {BENEFITS.map((b, i) => (
+            <BenefitCard key={i} b={b} i={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-            return (
-              <motion.div
-                key={i}
-                ref={ref}
-                initial={{ y: 50, opacity: 0 }}
-                animate={inView ? { y: 0, opacity: 1 } : {}}
+const BenefitCard = ({ b, i }: { b: typeof BENEFITS[0], i: number }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ y: 50, opacity: 0 }}
+      animate={inView ? { y: 0, opacity: 1 } : {}}
                 transition={{ duration: 0.7, delay: i * 0.15 }}
                 style={{
                   padding: '40px 32px',
@@ -119,21 +127,16 @@ export const WhyAI = () => {
                 }}>
                   {b.title}
                 </h3>
-                <div style={{ marginBottom: '16px' }}>
-                  <span style={{
-                    fontFamily: "'Cormorant Garamond', serif", fontSize: '42px',
-                    fontWeight: 300, color: P.terracotta, lineHeight: 1,
-                  }}>
-                    {b.stat}
-                  </span>
-                  <p className="mono-sm" style={{ marginTop: '6px', opacity: 0.7 }}>{b.statLabel}</p>
-                </div>
-                <p className="body-text" style={{ fontSize: '12px' }}>{b.body}</p>
-              </motion.div>
-            );
-          })}
-        </div>
+      <div style={{ marginBottom: '16px' }}>
+        <span style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: '42px',
+          fontWeight: 300, color: P.terracotta, lineHeight: 1,
+        }}>
+          {b.stat}
+        </span>
+        <p className="mono-sm" style={{ marginTop: '6px', opacity: 0.7 }}>{b.statLabel}</p>
       </div>
-    </section>
+      <p className="body-text" style={{ fontSize: '12px' }}>{b.body}</p>
+    </motion.div>
   );
 };

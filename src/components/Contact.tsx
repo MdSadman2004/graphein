@@ -73,6 +73,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security: Limit input length to prevent potential DoS/buffer issues
                   />
                 </div>
               ))}
@@ -84,6 +85,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={255} // Security: Limit email length
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +94,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // Security: Limit message length
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
