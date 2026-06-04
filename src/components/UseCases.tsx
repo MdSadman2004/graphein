@@ -58,16 +58,24 @@ export const UseCases = () => {
         </motion.div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
-          {CASES.map((c, i) => {
-            const ref = useRef(null);
-            const inView = useInView(ref, { once: true, margin: '-40px' });
+          {CASES.map((c, i) => (
+            <UseCaseCard key={i} c={c} i={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-            return (
-              <motion.div
-                key={i}
-                ref={ref}
-                initial={{ y: 50, opacity: 0 }}
-                animate={inView ? { y: 0, opacity: 1 } : {}}
+const UseCaseCard = ({ c, i }: { c: typeof CASES[0], i: number }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ y: 50, opacity: 0 }}
+      animate={inView ? { y: 0, opacity: 1 } : {}}
                 transition={{ duration: 0.7, delay: i * 0.1 }}
                 style={{
                   padding: '36px 32px',
@@ -114,24 +122,19 @@ export const UseCases = () => {
                   <p className="body-text" style={{ fontSize: '12px' }}>{c.solution}</p>
                 </div>
 
-                {/* Outcome */}
-                <div style={{
-                  padding: '14px 18px',
-                  background: `${P.navy}33`,
-                  borderRadius: '4px',
-                  borderLeft: `2px solid ${c.color}`,
-                }}>
-                  <p style={{
-                    fontFamily: "'DM Mono', monospace", fontSize: '9px',
-                    letterSpacing: '2px', color: P.sand, marginBottom: '4px', opacity: 0.7,
-                  }}>RESULT</p>
-                  <p className="body-text" style={{ fontSize: '12px', color: P.sand }}>{c.outcome}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+      {/* Outcome */}
+      <div style={{
+        padding: '14px 18px',
+        background: `${P.navy}33`,
+        borderRadius: '4px',
+        borderLeft: `2px solid ${c.color}`,
+      }}>
+        <p style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px',
+          letterSpacing: '2px', color: P.sand, marginBottom: '4px', opacity: 0.7,
+        }}>RESULT</p>
+        <p className="body-text" style={{ fontSize: '12px', color: P.sand }}>{c.outcome}</p>
       </div>
-    </section>
+    </motion.div>
   );
 };
