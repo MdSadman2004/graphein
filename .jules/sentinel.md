@@ -1,0 +1,4 @@
+## 2024-06-06 - Input Validation Added to Contact Form
+**Vulnerability:** The application's contact form lacked both client-side and server-side input validation. This meant that the form was vulnerable to submitting extremely large payloads (potential DoS risk) and malformed data (like invalid email addresses), which could cause downstream issues when processed.
+**Learning:** This is a common pattern in rapid prototyping where functionality is prioritized over defensive programming. Form submissions often assume benign user input.
+**Prevention:** Always implement defense-in-depth for form inputs. Add HTML `maxLength` attributes to all text inputs and textareas to provide immediate client-side limits, and implement programmatic checks (like regex validation and length checks) before processing the submission logic to ensure data integrity and prevent oversized payloads from reaching the backend or causing application errors.
