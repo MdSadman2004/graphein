@@ -13,7 +13,25 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Security: Validate required fields and formats
+    if (!formData.email || !formData.name || !formData.message) {
+      alert('Please fill in all required fields (Name, Email, Message).');
+      return;
+    }
+
+    // Security: Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    // Security: Field length validation to prevent excessively large payloads
+    if (formData.name.length > 100 || formData.email.length > 254 || formData.message.length > 2000 || (formData.company && formData.company.length > 100)) {
+      alert('One or more fields exceed the maximum allowed length.');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +91,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security: Limit input length
                   />
                 </div>
               ))}
@@ -84,6 +103,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254} // Security: Limit email length
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +112,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // Security: Limit message length
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
