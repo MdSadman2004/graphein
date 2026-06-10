@@ -13,7 +13,11 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // SECURITY: Input validation to prevent malformed data and DoS via large payloads
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return;
+    if (formData.name.length > 100 || formData.company.length > 100) return;
+    if (formData.message.length > 1000) return;
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
