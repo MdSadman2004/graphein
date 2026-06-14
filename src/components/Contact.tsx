@@ -13,7 +13,11 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Sentinel: Security improvement - Add server-side/logical input validation and length limits to prevent DoS attacks and invalid data
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email) || formData.email.length > 100) return;
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.message.length > 2000) return;
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +76,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // 🛡️ Sentinel: Prevent DoS via oversized payload
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +88,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={100} // 🛡️ Sentinel: Prevent DoS via oversized payload
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +97,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // 🛡️ Sentinel: Prevent DoS via oversized payload
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
