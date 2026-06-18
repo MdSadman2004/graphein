@@ -14,6 +14,15 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+    // Security enhancement: Add basic email format validation and length limits
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.email.length > 255 || formData.message.length > 5000) {
+      alert('Input exceeds maximum allowed length.');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +81,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +93,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={255}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +102,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={5000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
