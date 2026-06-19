@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // 🛡️ Sentinel: Basic email input validation to prevent malformed data
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -69,29 +77,35 @@ export const Contact = () => {
                   <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>
                     {f.ph.toUpperCase()}
                   </label>
+                  {/* 🛡️ Sentinel: Added maxLength to prevent excessively long inputs (DoS risk) */}
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
             </div>
             <div style={{ marginBottom: '32px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>EMAIL</label>
+              {/* 🛡️ Sentinel: Added maxLength to prevent excessively long inputs (DoS risk) */}
               <input
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
+              {/* 🛡️ Sentinel: Added maxLength to prevent excessively long inputs (DoS risk) */}
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
