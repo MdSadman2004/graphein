@@ -48,6 +48,55 @@ const BENEFITS = [
   },
 ];
 
+const BenefitCard = ({ b, i }: { b: typeof BENEFITS[0]; i: number }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ y: 50, opacity: 0 }}
+      animate={inView ? { y: 0, opacity: 1 } : {}}
+      transition={{ duration: 0.7, delay: i * 0.15 }}
+      style={{
+        padding: '40px 32px',
+        border: `1px solid ${P.navy}`,
+        borderRadius: '8px',
+        background: `linear-gradient(135deg, ${P.void}F0 0%, ${P.navy}18 100%)`,
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Glow accent */}
+      <div style={{
+        position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)',
+        width: '120px', height: '120px', borderRadius: '50%',
+        background: `radial-gradient(circle, ${P.terracotta}12 0%, transparent 70%)`,
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>{b.icon}</div>
+      <h3 style={{
+        fontFamily: "'Cormorant Garamond', serif", fontSize: '24px',
+        fontWeight: 300, color: P.sand, marginBottom: '16px',
+      }}>
+        {b.title}
+      </h3>
+      <div style={{ marginBottom: '16px' }}>
+        <span style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: '42px',
+          fontWeight: 300, color: P.terracotta, lineHeight: 1,
+        }}>
+          {b.stat}
+        </span>
+        <p className="mono-sm" style={{ marginTop: '6px', opacity: 0.7 }}>{b.statLabel}</p>
+      </div>
+      <p className="body-text" style={{ fontSize: '12px' }}>{b.body}</p>
+    </motion.div>
+  );
+};
+
 export const WhyAI = () => {
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true, margin: '-80px' });
@@ -83,55 +132,9 @@ export const WhyAI = () => {
         </motion.div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
-          {BENEFITS.map((b, i) => {
-            const ref = useRef(null);
-            const inView = useInView(ref, { once: true, margin: '-40px' });
-
-            return (
-              <motion.div
-                key={i}
-                ref={ref}
-                initial={{ y: 50, opacity: 0 }}
-                animate={inView ? { y: 0, opacity: 1 } : {}}
-                transition={{ duration: 0.7, delay: i * 0.15 }}
-                style={{
-                  padding: '40px 32px',
-                  border: `1px solid ${P.navy}`,
-                  borderRadius: '8px',
-                  background: `linear-gradient(135deg, ${P.void}F0 0%, ${P.navy}18 100%)`,
-                  textAlign: 'center',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Glow accent */}
-                <div style={{
-                  position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)',
-                  width: '120px', height: '120px', borderRadius: '50%',
-                  background: `radial-gradient(circle, ${P.terracotta}12 0%, transparent 70%)`,
-                  pointerEvents: 'none',
-                }} />
-
-                <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>{b.icon}</div>
-                <h3 style={{
-                  fontFamily: "'Cormorant Garamond', serif", fontSize: '24px',
-                  fontWeight: 300, color: P.sand, marginBottom: '16px',
-                }}>
-                  {b.title}
-                </h3>
-                <div style={{ marginBottom: '16px' }}>
-                  <span style={{
-                    fontFamily: "'Cormorant Garamond', serif", fontSize: '42px',
-                    fontWeight: 300, color: P.terracotta, lineHeight: 1,
-                  }}>
-                    {b.stat}
-                  </span>
-                  <p className="mono-sm" style={{ marginTop: '6px', opacity: 0.7 }}>{b.statLabel}</p>
-                </div>
-                <p className="body-text" style={{ fontSize: '12px' }}>{b.body}</p>
-              </motion.div>
-            );
-          })}
+          {BENEFITS.map((b, i) => (
+            <BenefitCard key={i} b={b} i={i} />
+          ))}
         </div>
       </div>
     </section>

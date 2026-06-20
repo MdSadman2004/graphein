@@ -13,7 +13,20 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Sentinel: Input validation to prevent malformed data and application DoS.
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.email.length > 100) {
+      setFormStatus('error');
+      return;
+    }
+    if (formData.message.length > 2000) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -95,7 +108,14 @@ export const Contact = () => {
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p className="mono-sm">masudsadman0@gmail.com</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p className="mono-sm">masudsadman0@gmail.com</p>
+                {formStatus === 'error' && (
+                  <p className="mono-sm" style={{ color: P.terracotta }}>
+                    Please check your inputs. Ensure your email is valid and your message is under 2000 characters.
+                  </p>
+                )}
+              </div>
               <button
                 className="btn-primary"
                 onClick={handleSubmit}

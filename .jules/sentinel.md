@@ -1,0 +1,4 @@
+## 2024-06-20 - [Frontend DoS & Malformed Input via Contact Form]
+**Vulnerability:** Contact form payload lacked proper validation and length restrictions on `name`, `company`, `email`, and `message` properties. The form simply sent any arbitrary length strings.
+**Learning:** Even if the form submission is currently mocked, failing to constrain user input lengths leaves the front-end vulnerable to basic application-level Denial of Service payloads, and invalid email formatting causes downstream API errors when integrated with a real backend.
+**Prevention:** Always sanitize input by applying length limitations according to domain constraints (e.g. 100 for identifiers, 2000 for bodies) and perform regex validation on expected types like email before interacting with downstream services or local state.
