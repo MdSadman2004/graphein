@@ -14,6 +14,20 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Security: Input validation to prevent excessively large payloads and malformed data
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (
+      formData.name.length > 100 ||
+      formData.company.length > 100 ||
+      formData.email.length > 254 ||
+      formData.message.length > 5000 ||
+      !emailRegex.test(formData.email)
+    ) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -96,14 +110,21 @@ export const Contact = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
-              <button
-                className="btn-primary"
-                onClick={handleSubmit}
-                disabled={formStatus === 'sending'}
-                style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
-              >
-                {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={formStatus === 'sending'}
+                  style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
+                >
+                  {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                </button>
+                {formStatus === 'error' && (
+                  <p className="mono-sm" style={{ color: '#ff6b6b' }}>
+                    Invalid input. Please check your details.
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
