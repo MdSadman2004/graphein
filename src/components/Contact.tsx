@@ -14,6 +14,21 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // 🛡️ Sentinel: Input Validation & DoS Prevention
+    // Ensure inputs are not excessively long to prevent memory exhaustion/DoS
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.message.length > 2000) {
+      alert("Input exceeds maximum allowed length.");
+      return;
+    }
+
+    // 🛡️ Sentinel: Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +88,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // 🛡️ Sentinel: Restrict input length
                   />
                 </div>
               ))}
@@ -84,6 +100,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254} // 🛡️ Sentinel: RFC 5321 length limit
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +109,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // 🛡️ Sentinel: Restrict message length
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
