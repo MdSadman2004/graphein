@@ -14,6 +14,13 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // 🛡️ Sentinel: Medium Priority - Input validation to prevent malformed data
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return; // Fail securely without leaking internal state
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +79,8 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    // 🛡️ Sentinel: Security enhancement - Input length limits to mitigate DoS risks
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +92,8 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                // 🛡️ Sentinel: Security enhancement - Input length limits
+                maxLength={254}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +102,8 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                // 🛡️ Sentinel: Security enhancement - Input length limits
+                maxLength={2000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
@@ -105,6 +118,11 @@ export const Contact = () => {
                 {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
             </div>
+            {formStatus === 'error' && (
+              <div style={{ color: P.terracotta, fontSize: '12px', marginTop: '16px', textAlign: 'right' }}>
+                Please enter a valid email address.
+              </div>
+            )}
           </motion.div>
         )}
       </div>
