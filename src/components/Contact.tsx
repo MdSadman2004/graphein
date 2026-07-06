@@ -13,7 +13,15 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Security: Input validation and length limits to prevent abuse (DoS, garbage data)
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) || formData.email.length > 254) {
+      setFormStatus('error');
+      return;
+    }
+    if (formData.name?.length > 100 || formData.company?.length > 100 || formData.message?.length > 2000) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -94,6 +102,11 @@ export const Contact = () => {
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+            {formStatus === 'error' && (
+              <p style={{ color: P.terracotta, fontSize: '14px', marginBottom: '16px' }}>
+                Please provide a valid email and ensure fields are not too long.
+              </p>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
