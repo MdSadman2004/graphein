@@ -13,7 +13,14 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // SECURITY: Input validation to prevent basic injection/errors and excessively large inputs
+    if (!formData.email || formData.email.length > 254) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) return;
+    if (formData.name && formData.name.length > 100) return;
+    if (formData.company && formData.company.length > 100) return;
+    if (formData.message && formData.message.length > 2000) return;
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +79,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // SECURITY: Enforce length limits (DoS protection)
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +91,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254} // SECURITY: Enforce maximum email length
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +100,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // SECURITY: Limit textarea length
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
