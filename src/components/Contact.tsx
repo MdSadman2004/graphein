@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useAppStore } from '../store/useAppStore';
 import { GraphMark } from './GraphMark';
@@ -12,8 +12,24 @@ export const Contact = () => {
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
+  // Security enhancement: Add state for validation errors
+  const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Security enhancement: Basic input validation
+    if (!formData.email || !formData.name || !formData.message) {
+      setError('Please fill out all required fields.');
+      return;
+    }
+
+    // Security enhancement: Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    setError(null);
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +89,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security enhancement: Input length limit
                   />
                 </div>
               ))}
@@ -84,6 +101,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254} // Security enhancement: Email length limit
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,8 +110,10 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={1000} // Security enhancement: Prevent DoS via large payload
               />
             </div>
+            {error && <p style={{ color: P.terracotta, marginBottom: '16px', fontSize: '14px', textAlign: 'left' }}>{error}</p>}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
