@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useAppStore } from '../store/useAppStore';
 import { GraphMark } from './GraphMark';
@@ -11,9 +11,21 @@ export const Contact = () => {
   const updateField = useAppStore((s) => s.updateField);
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // SECURITY: Input validation to prevent basic malicious data and malformed requests
+    if (!formData.email) {
+      setError('Email is required');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Invalid email format');
+      return;
+    }
+
+    setError(null);
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -62,8 +74,8 @@ export const Contact = () => {
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
               {[
-                { k: 'name' as const, ph: 'Your Name' },
-                { k: 'company' as const, ph: 'Company' },
+                { k: 'name' as const, ph: 'Your Name', max: 100 },
+                { k: 'company' as const, ph: 'Company', max: 100 },
               ].map((f) => (
                 <div key={f.k} style={{ marginBottom: '32px' }}>
                   <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>
@@ -72,6 +84,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={f.max}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +96,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={255}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,9 +105,15 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+            {error && (
+              <div style={{ color: P.terracotta, marginBottom: '20px', fontSize: '14px' }}>
+                {error}
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
