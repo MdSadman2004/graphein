@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useAppStore } from '../store/useAppStore';
 import { GraphMark } from './GraphMark';
@@ -11,9 +11,23 @@ export const Contact = () => {
   const updateField = useAppStore((s) => s.updateField);
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    setError(null);
+
+    // Security Enhancement: Validate input lengths to prevent abuse/DoS
+    if (formData.name.length > 100) return setError('Name is too long');
+    if (formData.company.length > 100) return setError('Company name is too long');
+    if (formData.message.length > 2000) return setError('Message is too long');
+
+    // Security Enhancement: Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) return setError('Email is required');
+    if (!emailRegex.test(formData.email) || formData.email.length > 254) {
+      return setError('Please enter a valid email address');
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -62,8 +76,8 @@ export const Contact = () => {
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
               {[
-                { k: 'name' as const, ph: 'Your Name' },
-                { k: 'company' as const, ph: 'Company' },
+                { k: 'name' as const, ph: 'Your Name', max: 100 },
+                { k: 'company' as const, ph: 'Company', max: 100 },
               ].map((f) => (
                 <div key={f.k} style={{ marginBottom: '32px' }}>
                   <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>
@@ -72,6 +86,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={f.max}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +98,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,9 +107,15 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+            {error && (
+              <div style={{ color: '#ff4444', marginBottom: '16px', fontSize: '14px' }}>
+                {error}
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
