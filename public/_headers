@@ -1,0 +1,15 @@
+/*
+  # Netlify Security Headers
+  # Intentionally omitting Content-Security-Policy (CSP) to avoid breaking external integrations
+
+  # Prevent Clickjacking by ensuring the content is not embedded into other sites
+  X-Frame-Options: DENY
+
+  # Prevent MIME-sniffing vulnerabilities
+  X-Content-Type-Options: nosniff
+
+  # Control referrer information sent to other sites
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Enforce HTTPS connections
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
