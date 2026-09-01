@@ -14,6 +14,13 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // SECURITY: Validate email format to prevent processing of malformed data
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      return; // Could also set an error state here, but returning early is simple
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -62,16 +69,18 @@ export const Contact = () => {
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
               {[
-                { k: 'name' as const, ph: 'Your Name' },
-                { k: 'company' as const, ph: 'Company' },
+                { k: 'name' as const, ph: 'Your Name', max: 100 },
+                { k: 'company' as const, ph: 'Company', max: 100 },
               ].map((f) => (
                 <div key={f.k} style={{ marginBottom: '32px' }}>
                   <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>
                     {f.ph.toUpperCase()}
                   </label>
+                  {/* SECURITY: Limit input length to prevent large payload DoS */}
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={f.max}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -79,18 +88,22 @@ export const Contact = () => {
             </div>
             <div style={{ marginBottom: '32px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>EMAIL</label>
+              {/* SECURITY: Limit input length to prevent large payload DoS */}
               <input
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={150}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
+              {/* SECURITY: Limit textarea length to prevent large payload DoS */}
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
