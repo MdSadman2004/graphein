@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Simple email regex validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -62,8 +70,8 @@ export const Contact = () => {
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
               {[
-                { k: 'name' as const, ph: 'Your Name' },
-                { k: 'company' as const, ph: 'Company' },
+                { k: 'name' as const, ph: 'Your Name', maxLength: 100 },
+                { k: 'company' as const, ph: 'Company', maxLength: 100 },
               ].map((f) => (
                 <div key={f.k} style={{ marginBottom: '32px' }}>
                   <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>
@@ -72,7 +80,11 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => {
+                      updateField(f.k, e.target.value);
+                      if (formStatus === 'error') setFormStatus('idle');
+                    }}
+                    maxLength={f.maxLength}
                   />
                 </div>
               ))}
@@ -83,7 +95,11 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  updateField('email', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
+                maxLength={254}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -91,9 +107,20 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                onChange={(e) => {
+                  updateField('message', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
+                maxLength={1000}
               />
             </div>
+
+            {formStatus === 'error' && (
+              <div style={{ marginBottom: '16px', color: '#ff4444', fontSize: '14px' }}>
+                Invalid email format.
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
