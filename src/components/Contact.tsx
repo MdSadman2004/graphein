@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,17 +81,25 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
             </div>
             <div style={{ marginBottom: '32px' }}>
-              <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>EMAIL</label>
+              <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: formStatus === 'invalid_email' ? 'red' : P.clay }}>
+                EMAIL {formStatus === 'invalid_email' && '- Invalid format'}
+              </label>
               <input
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  if (formStatus === 'invalid_email') setFormStatus('idle');
+                  updateField('email', e.target.value);
+                }}
+                maxLength={254}
+                style={{ borderColor: formStatus === 'invalid_email' ? 'red' : undefined }}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +108,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={1000}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
