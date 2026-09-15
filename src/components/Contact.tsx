@@ -13,9 +13,24 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.email) {
+      setFormStatus('error');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateField('email', e.target.value);
+    if (formStatus === 'error' || formStatus === 'invalid_email') {
+      setFormStatus('idle');
+    }
   };
 
   return (
@@ -72,6 +87,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,7 +99,11 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100}
+                onChange={handleEmailChange}
+                style={{
+                  borderColor: (formStatus === 'error' || formStatus === 'invalid_email') ? P.terracotta : undefined
+                }}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -91,11 +111,20 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p className="mono-sm">masudsadman0@gmail.com</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p className="mono-sm">masudsadman0@gmail.com</p>
+                {formStatus === 'error' && (
+                  <p className="mono-sm" style={{ color: P.terracotta, margin: 0 }}>Email is required.</p>
+                )}
+                {formStatus === 'invalid_email' && (
+                  <p className="mono-sm" style={{ color: P.terracotta, margin: 0 }}>Please enter a valid email.</p>
+                )}
+              </div>
               <button
                 className="btn-primary"
                 onClick={handleSubmit}
