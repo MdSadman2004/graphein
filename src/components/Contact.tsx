@@ -13,7 +13,14 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
+    // Security enhancement: Validate email address format and prevent submission if invalid
     if (!formData.email) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +80,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security enhancement: Restrict input length to prevent DOS/large payloads
                   />
                 </div>
               ))}
@@ -83,7 +91,13 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  updateField('email', e.target.value);
+                  if (formStatus === 'invalid_email') {
+                    setFormStatus('idle'); // Clear error on edit
+                  }
+                }}
+                maxLength={100} // Security enhancement: Restrict input length
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,18 +106,26 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // Security enhancement: Restrict textarea length
               />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p className="mono-sm">masudsadman0@gmail.com</p>
-              <button
-                className="btn-primary"
-                onClick={handleSubmit}
-                disabled={formStatus === 'sending'}
-                style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
-              >
-                {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <p className="mono-sm" style={{ marginTop: '12px' }}>masudsadman0@gmail.com</p>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={formStatus === 'sending'}
+                  style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
+                >
+                  {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                </button>
+                {formStatus === 'invalid_email' && (
+                  <p style={{ color: P.terracotta, marginTop: '8px', fontSize: '12px', fontFamily: "'DM Mono', monospace" }}>
+                    Please enter a valid email address
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
