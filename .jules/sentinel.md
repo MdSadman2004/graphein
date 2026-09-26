@@ -1,0 +1,4 @@
+## 2024-09-26 - Missing Input Validation and Length Limits
+**Vulnerability:** The contact form lacked email format validation and input length limits (`maxLength`), which could allow the submission of malformed data or excessively large payloads (DoS risk). Form validation errors failed silently without providing UI feedback.
+**Learning:** In a single-page application heavily relying on client-side state (Zustand), form submission logic must include explicit state updates for errors to prevent UX regressions where the user is unaware of validation failures. The omission of `maxLength` attributes is a common oversight that leaves inputs vulnerable to simple abuse.
+**Prevention:** Always implement explicit validation and length limits on all form inputs, and ensure error states trigger visible UI feedback before processing submissions.
