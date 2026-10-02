@@ -14,6 +14,25 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Security: Validate lengths to mitigate potential application-layer DoS
+    if (
+      formData.name.length > 100 ||
+      formData.company.length > 100 ||
+      formData.email.length > 100 ||
+      formData.message.length > 2000
+    ) {
+      setFormStatus('error');
+      return;
+    }
+
+    // Security: Validate email structure
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +92,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
@@ -84,6 +104,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,18 +113,27 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
-              <button
-                className="btn-primary"
-                onClick={handleSubmit}
-                disabled={formStatus === 'sending'}
-                style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
-              >
-                {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={formStatus === 'sending'}
+                  style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
+                >
+                  {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                </button>
+                {formStatus === 'invalid_email' && (
+                  <p style={{ color: P.terracotta, marginTop: '8px', fontSize: '14px', textAlign: 'right' }}>Please enter a valid email address.</p>
+                )}
+                {formStatus === 'error' && (
+                  <p style={{ color: P.terracotta, marginTop: '8px', fontSize: '14px', textAlign: 'right' }}>Invalid input length.</p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
