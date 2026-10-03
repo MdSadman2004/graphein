@@ -13,7 +13,18 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.email || !formData.name || !formData.message) {
+      setFormStatus('error');
+      return;
+    }
+
+    // Simple regex for valid email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,7 +83,11 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => {
+                      updateField(f.k, e.target.value);
+                      if (formStatus === 'error' || formStatus === 'invalid_email') setFormStatus('idle');
+                    }}
+                    maxLength={100}
                   />
                 </div>
               ))}
@@ -83,7 +98,11 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  updateField('email', e.target.value);
+                  if (formStatus === 'error' || formStatus === 'invalid_email') setFormStatus('idle');
+                }}
+                maxLength={100}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -91,9 +110,23 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                onChange={(e) => {
+                  updateField('message', e.target.value);
+                  if (formStatus === 'error' || formStatus === 'invalid_email') setFormStatus('idle');
+                }}
+                maxLength={2000}
               />
             </div>
+            {formStatus === 'error' && (
+              <p style={{ color: P.terracotta, marginBottom: '16px', fontSize: '14px' }}>
+                Please fill in all required fields (Name, Email, Project Brief).
+              </p>
+            )}
+            {formStatus === 'invalid_email' && (
+              <p style={{ color: P.terracotta, marginBottom: '16px', fontSize: '14px' }}>
+                Please provide a valid email address.
+              </p>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
