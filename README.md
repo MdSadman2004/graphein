@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# Graphein
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React studio landing page with motion, an ROI calculator and section-based navigation.
 
-Currently, two official plugins are available:
+![Graphein — repository source guide](docs/portfolio/overview.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+*Source guide drawn from the files in this repository; not a runtime screenshot or a fresh benchmark.*
 
-## React Compiler
+[Getting started](#getting-started) · [Source guide](#source-guide) · [Scope & limitations](#scope--limitations)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What visitors can explore
 
-## Expanding the ESLint configuration
+- An animated hero and particle-graph visual.
+- Services, use cases, process and FAQ sections.
+- A client-side ROI calculator.
+- Navigation, contact UI and shared interface state.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The components are authored for this studio presentation; this README replaces the untouched Vite scaffold.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Use a Node.js release compatible with **Vite 8** (Node 22.12+ or a newer supported LTS release):
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/MdSadman2004/graphein.git
+cd graphein
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL printed by Vite. The declared commands are `npm run build`, `npm run preview` and `npm run lint`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Explore the source
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+[Hero](src/components/Hero.tsx) · [particle graph](src/components/ParticleGraph.tsx) · [services](src/components/Services.tsx) · [contact](src/components/Contact.tsx) · [palette](src/palette.ts) · [styles](src/index.css).
+
+## Source guide
+
+| Component | File | Purpose |
+| :-- | :-- | :-- |
+| Page composition | [src/App.tsx](src/App.tsx) | Assembles the landing-page sections |
+| ROI calculator | [src/components/ROICalculator.tsx](src/components/ROICalculator.tsx) | Interactive illustrative calculation UI |
+| Shared interface state | [src/store/useAppStore.ts](src/store/useAppStore.ts) | Zustand state for page interactions |
+
+## Scope & limitations
+
+Treat ROI figures, marketing statistics and testimonial content as presentation content, not independently verified customer outcomes. This checkout does not contain a production lead-delivery backend. A frontend build does not validate a business claim.
+
+## Reuse & attribution
+
+No standalone repository-wide license file is included in this checkout. Public source access is not a blanket license grant; check provenance and permissions before redistribution.

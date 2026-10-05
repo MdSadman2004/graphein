@@ -1,0 +1,29 @@
+{
+  "kind": "source-guide",
+  "source_head": "37c59216216a5698c624ddddca8a2148ea3d1a4c",
+  "source_tree": "3b6370fffd0bf95fc4c4b24d6f2ee60789bed376",
+  "source_repository": "https://github.com/MdSadman2004/graphein",
+  "nodes": [
+    {
+      "label": "Page composition",
+      "path": "src/App.tsx",
+      "detail": "Assembles the landing-page sections"
+    },
+    {
+      "label": "ROI calculator",
+      "path": "src/components/ROICalculator.tsx",
+      "detail": "Interactive illustrative calculation UI"
+    },
+    {
+      "label": "Shared interface state",
+      "path": "src/store/useAppStore.ts",
+      "detail": "Zustand state for page interactions"
+    }
+  ],
+  "caption": "Source guide drawn from repository files; not a runtime screenshot or fresh benchmark.",
+  "generated_by": "render_guides.py",
+  "image_dimensions": [
+    1600,
+    960
+  ]
+}
