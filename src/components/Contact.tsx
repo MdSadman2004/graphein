@@ -13,7 +13,15 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.name || !formData.email || !formData.message) {
+      setFormStatus('error');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +81,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
@@ -84,6 +93,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,10 +102,15 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p className="mono-sm">masudsadman0@gmail.com</p>
+              <div>
+                <p className="mono-sm">masudsadman0@gmail.com</p>
+                {formStatus === 'error' && <span className="mono-sm" style={{ color: P.terracotta, marginTop: '8px', display: 'block' }}>Please fill in all required fields.</span>}
+                {formStatus === 'invalid_email' && <span className="mono-sm" style={{ color: P.terracotta, marginTop: '8px', display: 'block' }}>Please enter a valid email address.</span>}
+              </div>
               <button
                 className="btn-primary"
                 onClick={handleSubmit}
