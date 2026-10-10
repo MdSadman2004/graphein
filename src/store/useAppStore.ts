@@ -7,7 +7,7 @@ interface FormData {
   message: string;
 }
 
-type FormStatus = 'idle' | 'sending' | 'sent' | 'error';
+type FormStatus = 'idle' | 'sending' | 'sent' | 'error' | 'invalid_email';
 
 interface AppState {
   // Navigation
