@@ -37,6 +37,8 @@ interface AppState {
   resetForm: () => void;
   formStatus: FormStatus;
   setFormStatus: (s: FormStatus) => void;
+  formError: string | null;
+  setFormError: (e: string | null) => void;
 
   // FAQ
   openFaqIndex: number | null;
@@ -81,9 +83,11 @@ export const useAppStore = create<AppState>((set) => ({
   formData: { ...initialForm },
   updateField: (field, value) =>
     set((state) => ({ formData: { ...state.formData, [field]: value } })),
-  resetForm: () => set({ formData: { ...initialForm }, formStatus: 'idle' }),
+  resetForm: () => set({ formData: { ...initialForm }, formStatus: 'idle', formError: null }),
   formStatus: 'idle',
   setFormStatus: (s) => set({ formStatus: s }),
+  formError: null,
+  setFormError: (e) => set({ formError: e }),
 
   // FAQ
   openFaqIndex: null,
