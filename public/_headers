@@ -1,0 +1,9 @@
+/*
+  # Prevent clickjacking by restricting where the site can be framed
+  X-Frame-Options: DENY
+  # Prevent MIME-sniffing vulnerabilities
+  X-Content-Type-Options: nosniff
+  # Control referrer information sent in requests for privacy/security
+  Referrer-Policy: strict-origin-when-cross-origin
+  # Enforce HTTPS connections to protect data in transit
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
