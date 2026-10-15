@@ -13,7 +13,12 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Security: Validate input length to prevent application-level DoS
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.message.length > 1000) return;
+    // 🛡️ Security: Basic email format validation to prevent malformed inputs
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email) || formData.email.length > 254) return;
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -71,6 +76,7 @@ export const Contact = () => {
                   </label>
                   <input
                     placeholder={f.ph}
+                    maxLength={100} // 🛡️ Security: Defense-in-depth length limit
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
@@ -82,6 +88,7 @@ export const Contact = () => {
               <input
                 type="email"
                 placeholder="your@company.com"
+                maxLength={254} // 🛡️ Security: Defense-in-depth length limit
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
               />
@@ -90,6 +97,7 @@ export const Contact = () => {
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
+                maxLength={1000} // 🛡️ Security: Defense-in-depth length limit
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
               />
