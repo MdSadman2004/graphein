@@ -13,7 +13,18 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Basic input validation for security: ensure email matches standard format
+    // and limits message length to prevent potential DoS through large payloads
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+    if (formData.message.length > 1000) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +83,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +95,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,9 +104,17 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+
+            {formStatus === 'error' && (
+              <div style={{ marginBottom: '24px', color: '#ff4444', fontSize: '14px' }}>
+                Please provide a valid email and ensure your message is under 1000 characters.
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
