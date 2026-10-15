@@ -1,0 +1,12 @@
+/*
+  # Security Headers (Added by Sentinel)
+  # Enforce HTTPS connections
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # Prevent Clickjacking
+  X-Frame-Options: DENY
+  # Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+  # Basic XSS protection for older browsers
+  X-XSS-Protection: 1; mode=block
+  # Content Security Policy (allows inline for Framer Motion / Vite)
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self';
