@@ -61,6 +61,7 @@ export const Contact = () => {
             }}
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
+              {/* 🛡️ Sentinel: Security Enhancement - Add input length limits to prevent client-side DoS via excessively large inputs */}
               {[
                 { k: 'name' as const, ph: 'Your Name' },
                 { k: 'company' as const, ph: 'Company' },
@@ -72,6 +73,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +85,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={100}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +94,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
