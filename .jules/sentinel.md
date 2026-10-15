@@ -1,0 +1,4 @@
+## 2024-05-18 - Input validation missing lengths leads to resource exhaustion
+**Vulnerability:** Contact form lacked input validation, including missing length limits (`maxLength`) and email formatting, potentially allowing an attacker to submit exceedingly large strings.
+**Learning:** Even though the form doesn't hook to a real backend API, failing to implement client-side constraints on input elements can cause client-side browser crashes or resource exhaustion scenarios (especially in JS heavy single-page apps), and creates bad habits. Additionally, it highlights an architectural gap where input restrictions must be systematically integrated into the component designs from the start.
+**Prevention:** Systematically enforce length restrictions on all user input elements by integrating constraints like `maxLength` and standard format validation via regex.
