@@ -46,16 +46,24 @@ export const Process = () => {
             transform: 'translateX(-50%)',
           }} />
 
-          {STEPS.map((step, i) => {
-            const ref = useRef(null);
-            const inView = useInView(ref, { once: true, margin: '-60px' });
+          {STEPS.map((step, i) => (
+            <ProcessStep key={i} step={step} i={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-            return (
-              <motion.div
-                key={i}
-                ref={ref}
-                initial={{ x: step.side === 'left' ? -60 : 60, opacity: 0 }}
-                animate={inView ? { x: 0, opacity: 1 } : {}}
+const ProcessStep = ({ step, i }: { step: typeof STEPS[0], i: number }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ x: step.side === 'left' ? -60 : 60, opacity: 0 }}
+      animate={inView ? { x: 0, opacity: 1 } : {}}
                 transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 0.68, 0, 1.1] }}
                 style={{
                   display: 'flex',
@@ -79,30 +87,25 @@ export const Process = () => {
                   }}
                 />
 
-                <div style={{
-                  width: '42%',
-                  padding: '32px',
-                  background: `${P.void}CC`,
-                  border: `1px solid ${P.navy}`,
-                  borderRadius: '6px',
-                  backdropFilter: 'blur(8px)',
-                }}>
-                  <span className="mono-sm" style={{ color: P.terracotta, opacity: 1, display: 'block', marginBottom: '10px' }}>
-                    {step.n}
-                  </span>
-                  <h3 style={{
-                    fontFamily: "'Cormorant Garamond', serif", fontSize: '28px',
-                    fontWeight: 300, color: P.sand, marginBottom: '12px',
-                  }}>
-                    {step.t}
-                  </h3>
-                  <p className="body-text" style={{ fontSize: '12px' }}>{step.b}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
+      <div style={{
+        width: '42%',
+        padding: '32px',
+        background: `${P.void}CC`,
+        border: `1px solid ${P.navy}`,
+        borderRadius: '6px',
+        backdropFilter: 'blur(8px)',
+      }}>
+        <span className="mono-sm" style={{ color: P.terracotta, opacity: 1, display: 'block', marginBottom: '10px' }}>
+          {step.n}
+        </span>
+        <h3 style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: '28px',
+          fontWeight: 300, color: P.sand, marginBottom: '12px',
+        }}>
+          {step.t}
+        </h3>
+        <p className="body-text" style={{ fontSize: '12px' }}>{step.b}</p>
       </div>
-    </section>
+    </motion.div>
   );
 };
