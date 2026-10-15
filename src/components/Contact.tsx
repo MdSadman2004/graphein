@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Security enhancement: Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -49,6 +57,23 @@ export const Contact = () => {
             <p className="section-label" style={{ marginTop: '24px' }}>Message Received</p>
             <p className="body-text" style={{ marginTop: '12px' }}>We'll be in touch within 24 hours.</p>
           </motion.div>
+        ) : formStatus === 'error' ? (
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            style={{ textAlign: 'center', padding: '60px', border: `1px solid ${P.terracotta}`, borderRadius: '8px' }}
+          >
+            <p className="section-label" style={{ marginTop: '24px', color: P.terracotta }}>Invalid Email</p>
+            <p className="body-text" style={{ marginTop: '12px' }}>Please provide a valid email address.</p>
+            <button
+              className="btn-ghost"
+              onClick={() => setFormStatus('idle')}
+              style={{ marginTop: '24px' }}
+            >
+              Try Again
+            </button>
+          </motion.div>
         ) : (
           <motion.div
             initial={{ y: 40, opacity: 0 }}
@@ -73,6 +98,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security enhancement: Input length limit to prevent DoS
                   />
                 </div>
               ))}
@@ -84,6 +110,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254} // Security enhancement: Email length limit based on RFC 3696
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +119,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // Security enhancement: Input length limit to prevent DoS
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
