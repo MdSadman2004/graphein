@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useAppStore } from '../store/useAppStore';
 import { GraphMark } from './GraphMark';
@@ -11,9 +11,21 @@ export const Contact = () => {
   const updateField = useAppStore((s) => s.updateField);
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    setErrorMsg('');
+    if (!formData.name || !formData.email || !formData.message) {
+      setErrorMsg('Please fill in all required fields.');
+      setFormStatus('error');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMsg('Please enter a valid email address.');
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +84,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +96,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,19 +105,27 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
-              <button
-                className="btn-primary"
-                onClick={handleSubmit}
-                disabled={formStatus === 'sending'}
-                style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
-              >
-                {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                <button
+                  className="btn-primary"
+                  onClick={handleSubmit}
+                  disabled={formStatus === 'sending'}
+                  style={{ opacity: formStatus === 'sending' ? 0.6 : 1 }}
+                >
+                  {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
+                </button>
+                {formStatus === 'error' && errorMsg && (
+                  <p className="mono-sm" style={{ color: '#ff4444', margin: 0 }}>
+                    {errorMsg}
+                  </p>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
