@@ -13,7 +13,18 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Security: Enforce basic input validation to prevent malformed requests
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      alert('Invalid email format');
+      return;
+    }
+    // 🛡️ Security: Enforce a reasonable length on message payload to prevent application-layer DoS
+    if (formData.message && formData.message.length > 5000) {
+      alert('Message is too long. Max 5000 characters allowed.');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -71,6 +82,7 @@ export const Contact = () => {
                   </label>
                   <input
                     placeholder={f.ph}
+                    maxLength={100}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
@@ -82,6 +94,7 @@ export const Contact = () => {
               <input
                 type="email"
                 placeholder="your@company.com"
+                maxLength={255}
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
               />
@@ -90,6 +103,7 @@ export const Contact = () => {
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
+                maxLength={5000}
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
               />
