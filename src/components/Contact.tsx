@@ -13,7 +13,16 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Security enhancement: Validate email format before processing
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      return;
+    }
+    // Security enhancement: Ensure other inputs aren't excessively long to prevent payload issues
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.message.length > 2000) {
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +81,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // Security enhancement: limit input length
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +93,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={100} // Security enhancement: limit input length
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +102,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // Security enhancement: limit input length
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
