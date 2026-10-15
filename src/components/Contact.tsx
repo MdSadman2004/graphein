@@ -61,6 +61,7 @@ export const Contact = () => {
             }}
           >
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
+              {/* Security: Add maxLength to prevent client-side DoS from excessively large inputs */}
               {[
                 { k: 'name' as const, ph: 'Your Name' },
                 { k: 'company' as const, ph: 'Company' },
@@ -70,6 +71,7 @@ export const Contact = () => {
                     {f.ph.toUpperCase()}
                   </label>
                   <input
+                    maxLength={100}
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
@@ -81,6 +83,7 @@ export const Contact = () => {
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>EMAIL</label>
               <input
                 type="email"
+                maxLength={254}
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
@@ -89,6 +92,7 @@ export const Contact = () => {
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
+                maxLength={1000}
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
