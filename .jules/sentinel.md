@@ -1,0 +1,4 @@
+## 2024-03-24 - Missing Security Headers in Netlify Deployment
+**Vulnerability:** The Netlify deployment lacked a `public/_headers` file, meaning critical security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection) were not being enforced on the production site.
+**Learning:** Netlify deployments for static sites (like Vite/React SPA) don't automatically configure security headers. They must be explicitly defined in a `_headers` file in the publish directory.
+**Prevention:** Always verify the presence and configuration of `_headers` (or equivalent provider configuration like `netlify.toml` headers) for static site deployments to ensure baseline security posture is maintained.
