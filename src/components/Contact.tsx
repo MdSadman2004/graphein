@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Security Enhancement: Input validation to prevent malformed submissions
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('invalid_email');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +81,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
@@ -84,6 +93,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,8 +102,22 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
               />
             </div>
+
+            {formStatus === 'invalid_email' && (
+              <div style={{ marginBottom: '24px', padding: '12px', background: `${P.terracotta}22`, border: `1px solid ${P.terracotta}`, borderRadius: '4px' }}>
+                <p className="mono-sm" style={{ color: P.terracotta, margin: 0 }}>ERROR: Please enter a valid email address.</p>
+              </div>
+            )}
+
+            {formStatus === 'error' && (
+              <div style={{ marginBottom: '24px', padding: '12px', background: `${P.terracotta}22`, border: `1px solid ${P.terracotta}`, borderRadius: '4px' }}>
+                <p className="mono-sm" style={{ color: P.terracotta, margin: 0 }}>ERROR: Failed to send message. Please try again.</p>
+              </div>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button

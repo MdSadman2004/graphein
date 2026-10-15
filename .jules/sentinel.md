@@ -1,0 +1,4 @@
+## 2023-11-20 - [Missing Input Length Limits and Validation]
+**Vulnerability:** Contact form lacked input length constraints (allowing arbitrarily large payloads, i.e. possible DoS vector on submission processing/storage) and client-side email format validation (which can result in sending malformed requests to backend).
+**Learning:** React state-driven forms don't automatically enforce HTML attributes like `maxLength` natively unless explicitly mapped, and UI validation logic was missing which would lead to silent failures on invalid submission.
+**Prevention:** Always add `maxLength` attributes corresponding to acceptable payload sizes on frontend inputs and implement strict regex checks with proper user-facing error state updates (instead of silent failures) to prevent malformed data from being sent or processed.
