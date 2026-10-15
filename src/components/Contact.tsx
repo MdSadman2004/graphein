@@ -13,9 +13,20 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
+  };
+
+  const handleFieldChange = (field: keyof typeof formData, value: string) => {
+    updateField(field, value);
+    if (formStatus === 'error') {
+      setFormStatus('idle');
+    }
   };
 
   return (
@@ -71,8 +82,9 @@ export const Contact = () => {
                   </label>
                   <input
                     placeholder={f.ph}
+                    maxLength={100}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => handleFieldChange(f.k, e.target.value)}
                   />
                 </div>
               ))}
@@ -82,18 +94,25 @@ export const Contact = () => {
               <input
                 type="email"
                 placeholder="your@company.com"
+                maxLength={100}
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => handleFieldChange('email', e.target.value)}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
+                maxLength={2000}
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                onChange={(e) => handleFieldChange('message', e.target.value)}
               />
             </div>
+            {formStatus === 'error' && (
+              <p className="mono-sm" style={{ color: P.terracotta, marginBottom: '16px', textAlign: 'right' }}>
+                Please enter a valid email address.
+              </p>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
