@@ -13,7 +13,12 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Sentinel: Input validation - ensure valid email format before processing
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -94,6 +99,11 @@ export const Contact = () => {
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+            {formStatus === 'error' && (
+              <p className="body-text" style={{ color: P.terracotta, marginBottom: '16px', fontSize: '14px' }}>
+                Please enter a valid email address.
+              </p>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
