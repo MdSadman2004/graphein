@@ -12,8 +12,17 @@ export const Contact = () => {
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
+  // Security enhancement: Basic input validation to prevent abuse
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.email || !isValidEmail(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    if (formData.name.length > 100 || formData.company.length > 100 || formData.message.length > 2000 || formData.email.length > 254) {
+      return; // Silently drop excessively long requests that bypassed client-side limits
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +82,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
                   />
                 </div>
               ))}
@@ -84,6 +94,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={254}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,6 +103,7 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
