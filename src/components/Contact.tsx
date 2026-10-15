@@ -12,8 +12,16 @@ export const Contact = () => {
   const formStatus = useAppStore((s) => s.formStatus);
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
+  // 🛡️ Sentinel: Input validation for security enhancement
+  // Prevent submission of malformed emails and empty data which could cause issues.
+  const isValidEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.email || !isValidEmail(formData.email)) return;
+    if (!formData.name?.trim() || !formData.message?.trim()) return;
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +80,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // 🛡️ Sentinel: Prevent excessively large inputs
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +92,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={254} // 🛡️ Sentinel: Max length for email standards
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +101,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // 🛡️ Sentinel: Limit payload size for DoS prevention
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
