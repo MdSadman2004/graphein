@@ -13,7 +13,12 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Sentinel: Input validation to ensure valid email format. Fail securely if invalid.
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -60,6 +65,11 @@ export const Contact = () => {
               backdropFilter: 'blur(8px)',
             }}
           >
+            {formStatus === 'error' && (
+              <div style={{ marginBottom: '24px', padding: '12px', background: `${P.terracotta}22`, border: `1px solid ${P.terracotta}`, borderRadius: '4px', textAlign: 'center' }}>
+                <p className="mono-sm" style={{ color: P.sand }}>Please provide a valid email address.</p>
+              </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 40px' }}>
               {[
                 { k: 'name' as const, ph: 'Your Name' },
@@ -72,6 +82,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +94,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={100}
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +103,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
