@@ -14,6 +14,12 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+    // Security Fix: Input validation to prevent malformed email addresses
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +78,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} // Security Enhancement: Prevent extremely long inputs (DoS)
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,14 +90,24 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                maxLength={255} // Security Enhancement: Maximum length for email
+                onChange={(e) => {
+                  if (formStatus === 'error') setFormStatus('idle');
+                  updateField('email', e.target.value);
+                }}
               />
+              {formStatus === 'error' && (
+                <p style={{ color: P.terracotta, fontSize: '12px', marginTop: '8px' }}>
+                  Please enter a valid email address.
+                </p>
+              )}
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000} // Security Enhancement: Prevent overly large payloads
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
