@@ -58,80 +58,83 @@ export const UseCases = () => {
         </motion.div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
-          {CASES.map((c, i) => {
-            const ref = useRef(null);
-            const inView = useInView(ref, { once: true, margin: '-40px' });
-
-            return (
-              <motion.div
-                key={i}
-                ref={ref}
-                initial={{ y: 50, opacity: 0 }}
-                animate={inView ? { y: 0, opacity: 1 } : {}}
-                transition={{ duration: 0.7, delay: i * 0.1 }}
-                style={{
-                  padding: '36px 32px',
-                  border: `1px solid ${P.navy}`,
-                  borderRadius: '8px',
-                  background: `linear-gradient(135deg, ${P.void}EE 0%, ${P.navy}22 100%)`,
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* Top accent line */}
-                <div style={{
-                  position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
-                  background: `linear-gradient(90deg, transparent, ${c.color}66, transparent)`,
-                }} />
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                  <span style={{
-                    fontFamily: "'Cormorant Garamond', serif", fontSize: '22px',
-                    fontWeight: 400, color: c.color,
-                  }}>
-                    {c.industry}
-                  </span>
-                  <span className="mono-sm" style={{ color: c.color, opacity: 0.6 }}>
-                    CASE {String(i + 1).padStart(2, '0')}
-                  </span>
-                </div>
-
-                {/* Problem */}
-                <div style={{ marginBottom: '16px' }}>
-                  <p style={{
-                    fontFamily: "'DM Mono', monospace", fontSize: '9px',
-                    letterSpacing: '2px', color: P.terracotta, marginBottom: '6px',
-                  }}>THE PROBLEM</p>
-                  <p className="body-text" style={{ fontSize: '12px' }}>{c.problem}</p>
-                </div>
-
-                {/* Solution */}
-                <div style={{ marginBottom: '16px' }}>
-                  <p style={{
-                    fontFamily: "'DM Mono', monospace", fontSize: '9px',
-                    letterSpacing: '2px', color: P.clay, marginBottom: '6px',
-                  }}>OUR SOLUTION</p>
-                  <p className="body-text" style={{ fontSize: '12px' }}>{c.solution}</p>
-                </div>
-
-                {/* Outcome */}
-                <div style={{
-                  padding: '14px 18px',
-                  background: `${P.navy}33`,
-                  borderRadius: '4px',
-                  borderLeft: `2px solid ${c.color}`,
-                }}>
-                  <p style={{
-                    fontFamily: "'DM Mono', monospace", fontSize: '9px',
-                    letterSpacing: '2px', color: P.sand, marginBottom: '4px', opacity: 0.7,
-                  }}>RESULT</p>
-                  <p className="body-text" style={{ fontSize: '12px', color: P.sand }}>{c.outcome}</p>
-                </div>
-              </motion.div>
-            );
-          })}
+          {CASES.map((c, i) => (
+            <UseCaseCard key={i} c={c} i={i} />
+          ))}
         </div>
       </div>
     </section>
+  );
+};
+
+const UseCaseCard = ({ c, i }: { c: typeof CASES[0], i: number }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-40px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ y: 50, opacity: 0 }}
+      animate={inView ? { y: 0, opacity: 1 } : {}}
+      transition={{ duration: 0.7, delay: i * 0.1 }}
+      style={{
+        padding: '36px 32px',
+        border: `1px solid ${P.navy}`,
+        borderRadius: '8px',
+        background: `linear-gradient(135deg, ${P.void}EE 0%, ${P.navy}22 100%)`,
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      {/* Top accent line */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, height: '2px',
+        background: `linear-gradient(90deg, transparent, ${c.color}66, transparent)`,
+      }} />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+        <span style={{
+          fontFamily: "'Cormorant Garamond', serif", fontSize: '22px',
+          fontWeight: 400, color: c.color,
+        }}>
+          {c.industry}
+        </span>
+        <span className="mono-sm" style={{ color: c.color, opacity: 0.6 }}>
+          CASE {String(i + 1).padStart(2, '0')}
+        </span>
+      </div>
+
+      {/* Problem */}
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px',
+          letterSpacing: '2px', color: P.terracotta, marginBottom: '6px',
+        }}>THE PROBLEM</p>
+        <p className="body-text" style={{ fontSize: '12px' }}>{c.problem}</p>
+      </div>
+
+      {/* Solution */}
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px',
+          letterSpacing: '2px', color: P.clay, marginBottom: '6px',
+        }}>OUR SOLUTION</p>
+        <p className="body-text" style={{ fontSize: '12px' }}>{c.solution}</p>
+      </div>
+
+      {/* Outcome */}
+      <div style={{
+        padding: '14px 18px',
+        background: `${P.navy}33`,
+        borderRadius: '4px',
+        borderLeft: `2px solid ${c.color}`,
+      }}>
+        <p style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px',
+          letterSpacing: '2px', color: P.sand, marginBottom: '4px', opacity: 0.7,
+        }}>RESULT</p>
+        <p className="body-text" style={{ fontSize: '12px', color: P.sand }}>{c.outcome}</p>
+      </div>
+    </motion.div>
   );
 };
