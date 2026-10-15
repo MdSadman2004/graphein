@@ -1,0 +1,4 @@
+## 2023-10-25 - [Add Input Validation and Max Length]
+**Vulnerability:** Missing input validation and payload size limits on the contact form.
+**Learning:** Even though the frontend form doesn't immediately connect to a real backend, adding `maxLength` constraints and basic email regex checks on the client side is a necessary defense-in-depth measure. It prevents excessively large inputs that could lead to DoS if a backend is later attached, and ensures data integrity. It's crucial to also provide UI feedback when validation fails so it doesn't fail silently for the user.
+**Prevention:** Always enforce reasonable length constraints on all user-facing input fields, and perform basic format validation on the client side before allowing submission. Ensure any client-side validation failures are clearly communicated in the UI.
