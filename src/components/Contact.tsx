@@ -13,7 +13,20 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // 🛡️ Sentinel: Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    // 🛡️ Sentinel: Payload size validation
+    if (formData.name.length > 100 || formData.company.length > 100 ||
+        formData.email.length > 150 || formData.message.length > 1000) {
+      alert('Input size exceeds limits.');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +85,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100} /* 🛡️ Sentinel: Input length limit */
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,6 +97,7 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={150} /* 🛡️ Sentinel: Input length limit */
                 onChange={(e) => updateField('email', e.target.value)}
               />
             </div>
@@ -91,6 +106,7 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={1000} /* 🛡️ Sentinel: Input length limit */
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
