@@ -14,6 +14,14 @@ export const Contact = () => {
 
   const handleSubmit = () => {
     if (!formData.email) return;
+
+    // Security enhancement: Validate email format before processing
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -71,8 +79,12 @@ export const Contact = () => {
                   </label>
                   <input
                     placeholder={f.ph}
+                    maxLength={100} // Security enhancement: Limit input size
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => {
+                      if (formStatus === 'error') setFormStatus('idle');
+                      updateField(f.k, e.target.value);
+                    }}
                   />
                 </div>
               ))}
@@ -82,14 +94,25 @@ export const Contact = () => {
               <input
                 type="email"
                 placeholder="your@company.com"
+                maxLength={100} // Security enhancement: Limit input size
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  if (formStatus === 'error') setFormStatus('idle');
+                  updateField('email', e.target.value);
+                }}
+                style={{ borderColor: formStatus === 'error' ? P.terracotta : undefined }}
               />
+              {formStatus === 'error' && (
+                <p style={{ color: P.terracotta, fontSize: '12px', marginTop: '8px', fontFamily: "'DM Mono', monospace" }}>
+                  Please enter a valid email address.
+                </p>
+              )}
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
+                maxLength={2000} // Security enhancement: Limit input size
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
               />
