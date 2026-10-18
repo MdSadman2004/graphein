@@ -13,7 +13,24 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Security: Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
+
+    // Security: Validate input lengths as defense in depth against DOM tampering
+    if (
+      formData.name.length > 100 ||
+      formData.company.length > 100 ||
+      formData.email.length > 100 ||
+      formData.message.length > 2000
+    ) {
+      setFormStatus('error');
+      return;
+    }
+
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -73,6 +90,7 @@ export const Contact = () => {
                     placeholder={f.ph}
                     value={formData[f.k]}
                     onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100} // Security: Limit input length
                   />
                 </div>
               ))}
@@ -84,6 +102,7 @@ export const Contact = () => {
                 placeholder="your@company.com"
                 value={formData.email}
                 onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100} // Security: Limit email length
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -92,8 +111,16 @@ export const Contact = () => {
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
                 onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000} // Security: Limit message length
               />
             </div>
+            {formStatus === 'error' && (
+              <div style={{ marginBottom: '24px', padding: '16px', borderRadius: '4px', background: `${P.terracotta}22`, border: `1px solid ${P.terracotta}` }}>
+                <p className="mono-sm" style={{ color: P.terracotta }}>
+                  Invalid input. Please check your email format and ensure message lengths are within limits.
+                </p>
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
