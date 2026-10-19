@@ -13,7 +13,11 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,6 +76,7 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
+                    maxLength={100}
                     onChange={(e) => updateField(f.k, e.target.value)}
                   />
                 </div>
@@ -83,7 +88,9 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
+                maxLength={100}
                 onChange={(e) => updateField('email', e.target.value)}
+                style={{ borderColor: formStatus === 'error' ? P.terracotta : undefined }}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -91,9 +98,17 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
+                maxLength={2000}
                 onChange={(e) => updateField('message', e.target.value)}
               />
             </div>
+
+            {formStatus === 'error' && (
+              <p style={{ color: P.terracotta, marginBottom: '16px', fontSize: '14px' }}>
+                Please provide a valid email address.
+              </p>
+            )}
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
