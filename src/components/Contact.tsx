@@ -13,7 +13,11 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -70,9 +74,13 @@ export const Contact = () => {
                     {f.ph.toUpperCase()}
                   </label>
                   <input
+                    maxLength={100}
                     placeholder={f.ph}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => {
+                      updateField(f.k, e.target.value);
+                      if (formStatus === 'error') setFormStatus('idle');
+                    }}
                   />
                 </div>
               ))}
@@ -81,17 +89,30 @@ export const Contact = () => {
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>EMAIL</label>
               <input
                 type="email"
+                maxLength={100}
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  updateField('email', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
               />
+              {formStatus === 'error' && (
+                <p style={{ color: P.terracotta, fontSize: '12px', marginTop: '8px' }}>
+                  Invalid email address format.
+                </p>
+              )}
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
+                maxLength={2000}
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                onChange={(e) => {
+                  updateField('message', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
