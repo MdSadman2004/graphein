@@ -1,0 +1,4 @@
+## 2025-02-14 - [Missing Input Validation and Length Limits in React Component]
+**Vulnerability:** Found a lack of payload size limits (`maxLength`) on multiple inputs in `src/components/Contact.tsx` as well as a lack of email validation prior to state submission, increasing the likelihood of DoS or malformed submissions.
+**Learning:** Even though the submission mocks API requests, front-end state forms can suffer from out-of-memory or excessive processing on large uncontrolled payloads or invalid submissions without regex checks and length bounding in the React component itself.
+**Prevention:** Implement HTML5 `maxLength` constraints and validate inputs like email with a proper regex string before submitting the form. Ensure an error UI state is displayed to inform users of the failure instead of failing silently.
