@@ -1,0 +1,4 @@
+## 2025-02-12 - Missing Input Length Constraints and Silent Form Validation Failures
+**Vulnerability:** Contact form allowed arbitrarily large payloads (DoS risk) via standard text/textarea inputs and lacked robust validation for structured data (e.g., email), failing silently without user feedback if an invalid format was bypassed.
+**Learning:** React/Zustand client-side form logic without backend synchronization or inherent validation attributes naturally trusts the UI layer implicitly. Relying on default HTML inputs without explicit constraints opens the door for unexpectedly large state sizes causing performance degradation or backend payload bloat.
+**Prevention:** Always enforce logical constraints (`maxLength`, `type`) at the point of input capture in the component layer, and implement explicit validation logic that drives the state machine (e.g., setting "error" states) to guarantee a secure, informative user journey.
