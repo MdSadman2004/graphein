@@ -13,7 +13,12 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    // Security: Basic client-side validation to prevent malformed submissions
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email || !emailRegex.test(formData.email) || (formData.name?.length || 0) > 100 || (formData.message?.length || 0) > 2000) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -71,8 +76,12 @@ export const Contact = () => {
                   </label>
                   <input
                     placeholder={f.ph}
+                    maxLength={100}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    onChange={(e) => {
+                      if (formStatus === 'error') setFormStatus('idle');
+                      updateField(f.k, e.target.value);
+                    }}
                   />
                 </div>
               ))}
@@ -82,18 +91,31 @@ export const Contact = () => {
               <input
                 type="email"
                 placeholder="your@company.com"
+                maxLength={100}
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                onChange={(e) => {
+                  if (formStatus === 'error') setFormStatus('idle');
+                  updateField('email', e.target.value);
+                }}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
               <label className="mono-sm" style={{ display: 'block', marginBottom: '8px', opacity: 1, color: P.clay }}>PROJECT BRIEF</label>
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
+                maxLength={2000}
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                onChange={(e) => {
+                  if (formStatus === 'error') setFormStatus('idle');
+                  updateField('message', e.target.value);
+                }}
               />
             </div>
+            {formStatus === 'error' && (
+              <p className="mono-sm" style={{ color: P.terracotta, marginBottom: '16px' }}>
+                Please provide a valid email and ensure all fields are within limits.
+              </p>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p className="mono-sm">masudsadman0@gmail.com</p>
               <button
