@@ -13,7 +13,10 @@ export const Contact = () => {
   const setFormStatus = useAppStore((s) => s.setFormStatus);
 
   const handleSubmit = () => {
-    if (!formData.email) return;
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setFormStatus('error');
+      return;
+    }
     setFormStatus('sending');
     setTimeout(() => setFormStatus('sent'), 1200);
   };
@@ -72,7 +75,11 @@ export const Contact = () => {
                   <input
                     placeholder={f.ph}
                     value={formData[f.k]}
-                    onChange={(e) => updateField(f.k, e.target.value)}
+                    maxLength={100}
+                    onChange={(e) => {
+                      updateField(f.k, e.target.value);
+                      if (formStatus === 'error') setFormStatus('idle');
+                    }}
                   />
                 </div>
               ))}
@@ -83,7 +90,11 @@ export const Contact = () => {
                 type="email"
                 placeholder="your@company.com"
                 value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
+                maxLength={100}
+                onChange={(e) => {
+                  updateField('email', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
               />
             </div>
             <div style={{ marginBottom: '40px' }}>
@@ -91,7 +102,11 @@ export const Contact = () => {
               <textarea
                 placeholder="Tell us what you're building or what problem you're trying to solve..."
                 value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
+                maxLength={2000}
+                onChange={(e) => {
+                  updateField('message', e.target.value);
+                  if (formStatus === 'error') setFormStatus('idle');
+                }}
               />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -105,6 +120,11 @@ export const Contact = () => {
                 {formStatus === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
             </div>
+            {formStatus === 'error' && (
+              <p style={{ color: P.terracotta, marginTop: '16px', fontSize: '14px', textAlign: 'right' }}>
+                Please enter a valid email address.
+              </p>
+            )}
           </motion.div>
         )}
       </div>
