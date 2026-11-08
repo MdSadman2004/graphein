@@ -80,7 +80,7 @@ export const useAppStore = create<AppState>((set) => ({
   // Contact form
   formData: { ...initialForm },
   updateField: (field, value) =>
-    set((state) => ({ formData: { ...state.formData, [field]: value } })),
+    set((state) => ({ formData: { ...state.formData, [field]: value }, formStatus: 'idle' })),
   resetForm: () => set({ formData: { ...initialForm }, formStatus: 'idle' }),
   formStatus: 'idle',
   setFormStatus: (s) => set({ formStatus: s }),
